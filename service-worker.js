@@ -1,4 +1,3 @@
-
 /**
  * service-worker.js
  * Cachea el "app shell" para que la herramienta funcione sin conexión.
