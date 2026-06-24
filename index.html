@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ashes Audio Studio</title>
+<meta name="description" content="Plataforma de dirección y producción de audio para Ashes of the Reborn: grabación, dirección de actuación de voz, música, ambientes, efectos y exportación lista para integrar en el juego.">
+<meta name="theme-color" content="#0B0D10">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1>Ashes <span>Audio Studio</span></h1>
+    </div>
+  </header>
+
+  <main id="app-main" aria-live="polite"></main>
+
+  <nav class="bottomnav">
+    <button data-route="dashboard" type="button"></button>
+    <button data-route="library" type="button"></button>
+    <button data-route="mixer" type="button"></button>
+    <button data-route="export" type="button"></button>
+  </nav>
+</div>
+
+<div id="fab-root"></div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script src="./js/taxonomy.js"></script>
+<script src="./js/db.js"></script>
+<script src="./js/recorder.js"></script>
+<script src="./js/store.js"></script>
+<script src="./js/export.js"></script>
+<script src="./js/ui.js"></script>
+<script src="./js/app.js"></script>
+
+<script>
+  // Rellena las etiquetas de la navegación inferior con icono + texto (evita duplicar HTML largo arriba).
+  document.addEventListener('DOMContentLoaded', () => {
+    const navItems = [
+      { route: 'dashboard', label: 'Dashboard', icon: UI.ICN.dashboard },
+      { route: 'library', label: 'Biblioteca', icon: UI.ICN.library },
+      { route: 'mixer', label: 'Mezclador', icon: UI.ICN.mixer },
+      { route: 'export', label: 'Exportar', icon: UI.ICN.export },
+    ];
+    document.querySelectorAll('.bottomnav button').forEach((btn, i) => {
+      btn.innerHTML = `${navItems[i].icon}<span>${navItems[i].label}</span>`;
+    });
+  });
+</script>
+</body>
+</html>
