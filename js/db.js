@@ -13,12 +13,26 @@ let fallbackAssets = [];  // almacén en memoria
 let fallbackTakes = [];   // tomas en memoria
 
 function openDB() {
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve, reject) => {
-    if (!indexedDB) {
-      fallbackMode = true;
-      resolve(null);
-      return;
+  req.onerror = () => {
+  const err = req.error;
+  Diagnostics.logError('IndexedDB open error', err ? err.name + ': ' + err.message : 'unknown');
+  fallbackMode = true;
+  resolve(null);
+};
+
+// Y en la función wrap():
+
+function wrap(request) {
+  if (!request) return Promise.resolve([]);
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => {
+      const err = request.error;
+      Diagnostics.logError('IndexedDB operation failed', err ? err.name : 'unknown');
+      reject(request.error);
+    };
+  });
+};
     }
 
     const req = indexedDB.open(DB_NAME, DB_VERSION);
