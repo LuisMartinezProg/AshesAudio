@@ -23,6 +23,7 @@ function openDB() {
 // Y en la función wrap():
 
 function wrap(request) {
+  function wrap(request) {
   if (!request) return Promise.resolve([]);
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
@@ -32,8 +33,8 @@ function wrap(request) {
       reject(request.error);
     };
   });
-};
-    }
+  }
+    
 
     const req = indexedDB.open(DB_NAME, DB_VERSION);
 
