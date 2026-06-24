@@ -13,29 +13,16 @@ let fallbackAssets = [];  // almacén en memoria
 let fallbackTakes = [];   // tomas en memoria
 
 function openDB() {
-  req.onerror = () => {
-  const err = req.error;
-  Diagnostics.logError('IndexedDB open error', err ? err.name + ': ' + err.message : 'unknown');
-  fallbackMode = true;
-  resolve(null);
-};
+  if (dbPromise) return dbPromise;
 
-// Y en la función wrap():
-
-function wrap(request) {
-  function wrap(request) {
-  if (!request) return Promise.resolve([]);
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => {
-      const err = request.error;
-      Diagnostics.logError('IndexedDB operation failed', err ? err.name : 'unknown');
-      reject(request.error);
-    };
-  });
+  if (!window.indexedDB) {
+    Diagnostics.logWarn('IndexedDB no disponible en este navegador. Usando modo emergencia.');
+    fallbackMode = true;
+    dbPromise = Promise.resolve(null);
+    return dbPromise;
   }
-    
 
+  dbPromise = new Promise((resolve) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
 
     req.onupgradeneeded = (event) => {
@@ -55,11 +42,15 @@ function wrap(request) {
     };
 
     req.onsuccess = () => resolve(req.result);
+
     req.onerror = () => {
+      const err = req.error;
+      Diagnostics.logError('IndexedDB open error', err ? err.name + ': ' + err.message : 'unknown');
       fallbackMode = true;
       resolve(null);
     };
   });
+
   return dbPromise;
 }
 
@@ -74,7 +65,11 @@ function wrap(request) {
   if (!request) return Promise.resolve([]);
   return new Promise((resolve, reject) => {
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request.onerror = () => {
+      const err = request.error;
+      Diagnostics.logError('IndexedDB operation failed', err ? err.name : 'unknown');
+      reject(request.error);
+    };
   });
 }
 
@@ -195,3 +190,5 @@ const DB = {
 
 window.DB = DB;
 window.DBFallbackMode = () => fallbackMode;
+window.fallbackAssets = fallbackAssets;
+window.fallbackTakes = fallbackTakes;
